@@ -137,7 +137,7 @@
 | `--color-paper` | `#F3F0E8` | 頁面主背景 |
 | `--color-ink` | `#17343B` | 主要文字 |
 | `--color-night` | `#102A35` | 深色區塊與頁尾 |
-| `--color-spring` | `#557F78` | 主要操作與分類 |
+| `--color-spring` | `#476F69` | 主要操作與分類 |
 | `--color-moon` | `#E5C36A` | 焦點、分數與小面積強調 |
 | `--color-stamp` | `#9E4B50` | 答對、印章與警示 |
 | `--color-mist` | `#DCE7E3` | 卡片與次要背景 |
