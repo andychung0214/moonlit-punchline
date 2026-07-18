@@ -1,0 +1,45 @@
+.loading-panel {
+  width: min(100%, 36rem);
+  padding: var(--space-7);
+  border: 1px solid rgb(23 52 59 / 28%);
+  background: rgb(255 254 250 / 88%);
+  box-shadow: var(--shadow-paper);
+  text-align: center;
+}
+
+.loading-panel h1 {
+  margin-bottom: var(--space-3);
+  font-size: clamp(2.4rem, 8vw, 4.8rem);
+  letter-spacing: 0.08em;
+}
+
+.toast-region {
+  position: fixed;
+  z-index: 20;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  max-width: min(24rem, calc(100vw - 2rem));
+}
+
+.ambient-moon {
+  position: fixed;
+  top: clamp(2rem, 8vw, 6rem);
+  right: clamp(1rem, 8vw, 8rem);
+  width: clamp(5rem, 13vw, 10rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-moon);
+  box-shadow: 0 0 0 1rem rgb(229 195 106 / 8%);
+  opacity: 0.9;
+}
+
+.ambient-moon::after {
+  position: absolute;
+  top: -0.35rem;
+  left: -1rem;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: inherit;
+  background: var(--color-paper);
+  content: "";
+}

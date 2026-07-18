@@ -1,0 +1,26 @@
+#app-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+  padding: var(--space-5);
+}
+
+@media (min-width: 40rem) {
+  #app-shell {
+    padding: var(--space-6);
+  }
+}
+
+@media (min-width: 64rem) {
+  #app-shell {
+    padding: var(--space-7);
+  }
+
+  .loading-panel {
+    transform: translateX(-7vw);
+  }
+}
