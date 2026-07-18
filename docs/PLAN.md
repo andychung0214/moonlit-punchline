@@ -116,12 +116,12 @@ test('入口包含 SEO、結構化資料及相對資源', () => {
 
 - [ ] **Step 2: 執行測試並確認先失敗**
 
-Run: `node --test tests/static-structure.test.js`  
+Run: `node --test tests/static-structure.test.js`
 Expected: FAIL，原因為 `index.html` 尚不存在。
 
 - [ ] **Step 3: 建立最小可載入的語意入口與 CSS 架構**
 
-`index.html` 必須含 `lang="zh-Hant"`、Viewport、Description、Canonical、Open Graph、Twitter Card、`WebApplication` JSON-LD、跳至主要內容連結、`main#app-shell`、兩個 ARIA live region、`noscript` 與相對路徑 `./scripts/app.js`。  
+`index.html` 必須含 `lang="zh-Hant"`、Viewport、Description、Canonical、Open Graph、Twitter Card、`WebApplication` JSON-LD、跳至主要內容連結、`main#app-shell`、兩個 ARIA live region、`noscript` 與相對路徑 `./scripts/app.js`。
 `scripts/app.js` 先提供：
 
 ```js
@@ -138,7 +138,7 @@ if (typeof document !== 'undefined') bootstrap();
 
 - [ ] **Step 4: 撰寫美術與測試文件**
 
-`docs/ART-DIRECTION.md` 列出三種曾評估風格、採用「月下冷泉旅店」原因、七色色票、字體堆疊、房牌／障子門／湯牌／印章規格、160–420ms 動畫與禁止事項。  
+`docs/ART-DIRECTION.md` 列出三種曾評估風格、採用「月下冷泉旅店」原因、七色色票、字體堆疊、房牌／障子門／湯牌／印章規格、160–420ms 動畫與禁止事項。
 `docs/TEST-PLAN.md` 以可勾選清單列出功能、桌機、360px、768px、鍵盤、螢幕閱讀器、對比、減少動態效果、儲存降級、剪貼簿降級及靜態子路徑測試。
 
 - [ ] **Step 5: 加入搜尋引擎與靜態部署檔**
@@ -147,9 +147,9 @@ if (typeof document !== 'undefined') bootstrap();
 
 - [ ] **Step 6: 執行里程碑驗證**
 
-Run: `node --test tests/static-structure.test.js`  
-Expected: 2 tests PASS。  
-Run: `git diff --check`  
+Run: `node --test tests/static-structure.test.js`
+Expected: 2 tests PASS。
+Run: `git diff --check`
 Expected: 無輸出且 exit code 0。
 
 - [ ] **Step 7: 提交專案骨架**
@@ -194,7 +194,7 @@ test('題庫為六類各十二題', () => {
 
 - [ ] **Step 2: 執行題庫測試並確認先失敗**
 
-Run: `node --test tests/jokes.test.js`  
+Run: `node --test tests/jokes.test.js`
 Expected: FAIL，原因為 `data/jokes.js` 尚不存在。
 
 - [ ] **Step 3: 建立完整 72 題資料**
@@ -203,12 +203,12 @@ Expected: FAIL，原因為 `data/jokes.js` 尚不存在。
 
 - [ ] **Step 4: 執行題庫契約測試**
 
-Run: `node --test tests/jokes.test.js`  
+Run: `node --test tests/jokes.test.js`
 Expected: 全部 PASS。
 
 - [ ] **Step 5: 寫入引擎與狀態失敗測試**
 
-`tests/joke-engine.test.js` 使用固定 random 序列驗證 10 題不重複、四選項唯一且正解唯一、分類與收藏篩選。  
+`tests/joke-engine.test.js` 使用固定 random 序列驗證 10 題不重複、四選項唯一且正解唯一、分類與收藏篩選。
 `tests/game-state.test.js` 驗證：
 
 ```js
@@ -223,20 +223,20 @@ test('答對依連勝加分且答錯歸零', () => {
 
 - [ ] **Step 6: 執行核心測試並確認先失敗**
 
-Run: `node --test tests/joke-engine.test.js tests/game-state.test.js`  
+Run: `node --test tests/joke-engine.test.js tests/game-state.test.js`
 Expected: FAIL，原因為公開函式尚不存在。
 
 - [ ] **Step 7: 實作最小純函式核心**
 
-`createGame` 抽 10 題並建立 `{ questions, index, score, streak, bestStreak, correctCount, answered, selectedAnswer, finished }`。  
-`answerCurrent` 拒絕重複作答；答對分數為 `100 + Math.min(nextStreak, 5) * 20`，答錯維持分數並將連勝歸零。  
+`createGame` 抽 10 題並建立 `{ questions, index, score, streak, bestStreak, correctCount, answered, selectedAnswer, finished }`。
+`answerCurrent` 拒絕重複作答；答對分數為 `100 + Math.min(nextStreak, 5) * 20`，答錯維持分數並將連勝歸零。
 `advanceGame` 只在已作答時前進；最後一題後設定 `finished: true`。
 
 - [ ] **Step 8: 執行全部核心測試與差異檢查**
 
-Run: `node --test tests/jokes.test.js tests/joke-engine.test.js tests/game-state.test.js`  
-Expected: 全部 PASS。  
-Run: `git diff --check`  
+Run: `node --test tests/jokes.test.js tests/joke-engine.test.js tests/game-state.test.js`
+Expected: 全部 PASS。
+Run: `git diff --check`
 Expected: exit code 0。
 
 - [ ] **Step 9: 提交題庫與核心**
@@ -268,13 +268,13 @@ git commit -m "feat: 建立冷梗題庫與遊戲核心"
 
 - [ ] **Step 1: 寫入瀏覽器能力失敗測試**
 
-`tests/storage.test.js` 以記憶體假物件驗證正常讀寫、損壞 JSON、`setItem` 丟錯、收藏切換與清除。  
-`tests/share.test.js` 驗證分享字串及 Clipboard 成功／拒絕。  
+`tests/storage.test.js` 以記憶體假物件驗證正常讀寫、損壞 JSON、`setItem` 丟錯、收藏切換與清除。
+`tests/share.test.js` 驗證分享字串及 Clipboard 成功／拒絕。
 `tests/audio.test.js` 驗證缺少 AudioContext 時 `supported === false`，且未啟用時 `play` 不建立節點。
 
 - [ ] **Step 2: 執行測試並確認先失敗**
 
-Run: `node --test tests/storage.test.js tests/share.test.js tests/audio.test.js`  
+Run: `node --test tests/storage.test.js tests/share.test.js tests/audio.test.js`
 Expected: FAIL，原因為模組尚不存在。
 
 - [ ] **Step 3: 實作儲存與收藏**
@@ -296,12 +296,12 @@ export const DEFAULT_PROFILE = Object.freeze({
 
 - [ ] **Step 4: 實作分享與程式化音效**
 
-`formatShareText` 輸出「問題／答案／月下冷梗旅店」三行。Clipboard 寫入失敗回傳 `{ copied: false, text }`。  
+`formatShareText` 輸出「問題／答案／月下冷梗旅店」三行。Clipboard 寫入失敗回傳 `{ copied: false, text }`。
 音效控制器只在 `setEnabled(true)` 後延遲建立 AudioContext；`play('correct'|'wrong'|'flip')` 以 OscillatorNode 與 GainNode 產生不超過 0.45 秒的短音效。
 
 - [ ] **Step 5: 執行能力測試**
 
-Run: `node --test tests/storage.test.js tests/share.test.js tests/audio.test.js`  
+Run: `node --test tests/storage.test.js tests/share.test.js tests/audio.test.js`
 Expected: 全部 PASS。
 
 - [ ] **Step 6: 提交瀏覽器能力模組**
@@ -349,7 +349,7 @@ test('挑戰畫面提供題號、四個答案與即時回饋關聯', () => {
 
 - [ ] **Step 2: 執行 UI 測試並確認先失敗**
 
-Run: `node --test tests/ui-render.test.js`  
+Run: `node --test tests/ui-render.test.js`
 Expected: FAIL，原因為 `scripts/ui.js` 尚不存在。
 
 - [ ] **Step 3: 實作純字串畫面與安全跳脫**
@@ -366,12 +366,12 @@ Expected: FAIL，原因為 `scripts/ui.js` 尚不存在。
 
 - [ ] **Step 6: 執行自動測試**
 
-Run: `node --test`  
+Run: `node --test`
 Expected: 所有測試 PASS。
 
 - [ ] **Step 7: 啟動靜態伺服器並完成瀏覽器里程碑驗證**
 
-Run: `python -m http.server 4173 --bind 127.0.0.1`  
+Run: `python -m http.server 4173 --bind 127.0.0.1`
 Verify at `http://127.0.0.1:4173/`：
 
 1. 大廳兩個入口可見且 Tab 順序合理。
@@ -408,7 +408,7 @@ git commit -m "feat: 完成旅店大廳與問答挑戰"
 
 - [ ] **Step 1: 擴充失敗測試**
 
-`tests/ui-render.test.js` 新增：七個篩選按鈕、翻牌前不顯示答案、翻牌後顯示註解與地區、收藏空狀態、複製降級欄位。  
+`tests/ui-render.test.js` 新增：八個篩選按鈕、翻牌前不顯示答案、翻牌後顯示註解與地區、收藏空狀態、複製降級欄位。
 `tests/browser-test.js` 在瀏覽器頁面執行簡易斷言，結果寫入 `#test-results`：
 
 ```js
@@ -422,7 +422,7 @@ document.querySelector('#test-results').textContent =
 
 - [ ] **Step 2: 執行測試並確認新增案例先失敗**
 
-Run: `node --test tests/ui-render.test.js`  
+Run: `node --test tests/ui-render.test.js`
 Expected: 新增的放映室案例 FAIL。
 
 - [ ] **Step 3: 實作放映室狀態與畫面**
@@ -439,9 +439,9 @@ Expected: 新增的放映室案例 FAIL。
 
 - [ ] **Step 6: 執行自動與瀏覽器測試**
 
-Run: `node --test`  
-Expected: 所有測試 PASS。  
-Open: `http://127.0.0.1:4173/tests/browser-test.html`  
+Run: `node --test`
+Expected: 所有測試 PASS。
+Open: `http://127.0.0.1:4173/tests/browser-test.html`
 Expected: 頁面所有檢查顯示 PASS。
 
 - [ ] **Step 7: 完成手動里程碑驗證**
@@ -478,22 +478,22 @@ git commit -m "feat: 完成冷梗放映室與收藏互動"
 
 - [ ] **Step 2: 執行文件測試並確認先失敗**
 
-Run: `node --test tests/documentation.test.js`  
+Run: `node --test tests/documentation.test.js`
 Expected: FAIL，原因為交付文件尚不存在。
 
 - [ ] **Step 3: 撰寫 README、CONTRIBUTING 與 LICENSE**
 
-README 提供直接開啟限制與 `python -m http.server 4173` 建議、Synology NAS Web Station 部署步驟、完整結構樹、`node --test` 指令、瀏覽器測試網址、已知限制與 MIT。  
-CONTRIBUTING 規定 `feature/xxx`、`fix/xxx`、`chore/xxx`，提交格式 `type(scope): 繁體中文描述`，新增笑話必須維持全齡、三個干擾選項及資料契約。  
+README 提供直接開啟限制與 `python -m http.server 4173` 建議、Synology NAS Web Station 部署步驟、完整結構樹、`node --test` 指令、瀏覽器測試網址、已知限制與 MIT。
+CONTRIBUTING 規定 `feature/xxx`、`fix/xxx`、`chore/xxx`，提交格式 `type(scope): 繁體中文描述`，新增笑話必須維持全齡、三個干擾選項及資料契約。
 LICENSE 使用 2026 年與專案貢獻者名稱。
 
 - [ ] **Step 4: 執行完整自動驗證**
 
-Run: `node --test`  
-Expected: 0 failures。  
-Run: `git diff --check`  
-Expected: 無輸出且 exit code 0。  
-Run: `git status --short`  
+Run: `node --test`
+Expected: 0 failures。
+Run: `git diff --check`
+Expected: 無輸出且 exit code 0。
+Run: `git status --short`
 Expected: 只列出本里程碑預期檔案。
 
 - [ ] **Step 5: 執行最終瀏覽器驗證並更新測試清單**

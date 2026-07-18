@@ -37,3 +37,16 @@ test('未啟用前不建立 AudioContext', () => {
   assert.equal(audio.play('flip'), true);
   assert.equal(instances, 1);
 });
+
+test('AudioContext 建立失敗不影響主要流程', () => {
+  class BrokenAudioContext {
+    constructor() {
+      throw new Error('audio blocked');
+    }
+  }
+  const audio = createAudioController(BrokenAudioContext);
+  assert.equal(audio.setEnabled(true), true);
+  assert.doesNotThrow(() => audio.play('correct'));
+  assert.equal(audio.play('correct'), false);
+  assert.equal(audio.enabled, false);
+});

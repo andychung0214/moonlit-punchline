@@ -38,12 +38,23 @@ const challenge = {
 test('大廳提供兩個模式入口與本機紀錄摘要', () => {
   const html = renderLobby({
     profile: { bestScore: 620, bestStreak: 4, favorites: ['one', 'two'] },
-    audioSupported: true
+    audioSupported: true,
+    categories: [
+      { name: '華語諧音' },
+      { name: '文字遊戲' },
+      { name: '動植物冷知笑' },
+      { name: '食物與日常' },
+      { name: '世界冷梗' },
+      { name: '荒謬邏輯' }
+    ]
   });
   assert.match(html, /data-action="open-challenge"/);
   assert.match(html, /data-action="open-gallery"/);
   assert.match(html, /620/);
   assert.match(html, /收藏.*2/s);
+  assert.match(html, /玩法/);
+  assert.match(html, /華語諧音/);
+  assert.match(html, /荒謬邏輯/);
 });
 
 test('挑戰畫面提供題號、四個答案與即時回饋關聯', () => {
@@ -66,18 +77,45 @@ test('作答後顯示文字結果、註解與下一題操作', () => {
   assert.match(html, /disabled/);
 });
 
-test('結算畫面顯示三項成績與重新挑戰', () => {
-  const html = renderResults({
+test('答錯選項同時提供文字結果且惡意題庫文字會跳脫', () => {
+  const unsafeQuestion = {
+    ...question,
+    question: '<img src=x onerror=alert(1)>',
+    choices: [
+      { text: '第一題', correct: false },
+      ...question.choices.slice(1)
+    ]
+  };
+  const html = renderChallenge({
     ...challenge,
-    score: 920,
-    correctCount: 8,
-    bestStreak: 5,
-    finished: true
+    questions: Array.from({ length: 10 }, () => unsafeQuestion),
+    answered: true,
+    selectedAnswer: '第一題',
+    lastAnswerCorrect: false
   });
+  assert.doesNotMatch(html, /<img/);
+  assert.match(html, /&lt;img/);
+  assert.match(html, /你的答案 · 錯誤/);
+  assert.match(html, /正確答案/);
+});
+
+test('結算畫面顯示三項成績與重新挑戰', () => {
+  const html = renderResults(
+    {
+      ...challenge,
+      score: 920,
+      correctCount: 8,
+      bestStreak: 5,
+      finished: true
+    },
+    { favorites: [] }
+  );
   assert.match(html, /920/);
   assert.match(html, /8.*10/s);
   assert.match(html, /最高連勝.*5/s);
   assert.match(html, /data-action="restart"/);
+  assert.match(html, /data-action="toggle-result-favorite"/);
+  assert.match(html, /aria-pressed="false"/);
 });
 
 const galleryJokes = [

@@ -8,6 +8,7 @@ test('入口包含語意掛載點與無障礙回饋區', () => {
   assert.match(html, /id="app-shell"/);
   assert.match(html, /id="live-region"[^>]*aria-live="polite"/);
   assert.match(html, /id="toast-region"[^>]*aria-live="polite"/);
+  assert.match(html, /class="loading-fallback"/);
 });
 
 test('入口包含 SEO、結構化資料及相對資源', () => {

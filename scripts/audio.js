@@ -12,33 +12,45 @@ export function createAudioController(AudioContextClass) {
   function setEnabled(nextEnabled) {
     if (!supported) return false;
     enabled = Boolean(nextEnabled);
-    if (enabled && context?.state === 'suspended') context.resume();
+    if (enabled && context?.state === 'suspended') {
+      try {
+        context.resume();
+      } catch {
+        enabled = false;
+      }
+    }
     return enabled;
   }
 
   function play(name) {
     if (!supported || !enabled || !SOUNDS[name]) return false;
-    context ??= new AudioContextClass();
-    if (context.state === 'suspended') context.resume();
-    const sound = SOUNDS[name];
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = sound.type;
-    oscillator.frequency.setValueAtTime(sound.frequency, context.currentTime);
-    if (typeof oscillator.frequency.exponentialRampToValueAtTime === 'function') {
-      oscillator.frequency.exponentialRampToValueAtTime(
-        sound.endFrequency,
-        context.currentTime + sound.duration
-      );
+    try {
+      context ??= new AudioContextClass();
+      if (context.state === 'suspended') context.resume();
+      const sound = SOUNDS[name];
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = sound.type;
+      oscillator.frequency.setValueAtTime(sound.frequency, context.currentTime);
+      if (typeof oscillator.frequency.exponentialRampToValueAtTime === 'function') {
+        oscillator.frequency.exponentialRampToValueAtTime(
+          sound.endFrequency,
+          context.currentTime + sound.duration
+        );
+      }
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.11, context.currentTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + sound.duration);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(context.currentTime);
+      oscillator.stop(context.currentTime + sound.duration);
+      return true;
+    } catch {
+      context = null;
+      enabled = false;
+      return false;
     }
-    gain.gain.setValueAtTime(0.0001, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.11, context.currentTime + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + sound.duration);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(context.currentTime);
-    oscillator.stop(context.currentTime + sound.duration);
-    return true;
   }
 
   return {

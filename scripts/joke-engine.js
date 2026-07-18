@@ -59,6 +59,13 @@ export function validateJokes(jokes, categoryIds = new Set(jokes.map(({ category
     } else {
       if (new Set(joke.distractors).size !== 3) errors.push(`${label} 干擾選項重複`);
       if (joke.distractors.includes(joke.answer)) errors.push(`${label} 干擾選項含正確答案`);
+      if (
+        joke.distractors.some(
+          (distractor) => typeof distractor !== 'string' || !distractor.trim()
+        )
+      ) {
+        errors.push(`${label} 的干擾選項必須是不可空白字串`);
+      }
     }
     if (![1, 2, 3].includes(joke.difficulty)) errors.push(`${label} 難度錯誤`);
   }

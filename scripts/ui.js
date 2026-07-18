@@ -14,15 +14,19 @@ export function escapeHtml(value) {
 
 function renderSoundButton(audioSupported, soundEnabled) {
   if (!audioSupported) return '';
+  const enabled = soundEnabled === true;
   return `
-    <button class="text-button" type="button" data-action="toggle-sound" aria-pressed="${soundEnabled}">
-      <span aria-hidden="true">${soundEnabled ? '♬' : '♩'}</span>
-      音效${soundEnabled ? '已開啟' : '已關閉'}
+    <button class="text-button" type="button" data-action="toggle-sound" aria-pressed="${enabled}">
+      <span aria-hidden="true">${enabled ? '♬' : '♩'}</span>
+      音效${enabled ? '已開啟' : '已關閉'}
     </button>
   `;
 }
 
-export function renderLobby({ profile, audioSupported = false }) {
+export function renderLobby({ profile, audioSupported = false, categories = [] }) {
+  const categoryOverview = categories
+    .map(({ name }) => `<li>${escapeHtml(name)}</li>`)
+    .join('');
   return `
     <section class="lobby screen-enter" aria-labelledby="lobby-title">
       <header class="lobby__header">
@@ -57,6 +61,16 @@ export function renderLobby({ profile, audioSupported = false }) {
           <span class="door-action">隨意看看 <b aria-hidden="true">→</b></span>
         </button>
       </div>
+      <div class="lobby-guide">
+        <details>
+          <summary>玩法說明</summary>
+          <p>挑戰房每局十題，答對可累積分數與連勝；放映室不計分，可自由翻牌、收藏與分享。</p>
+        </details>
+        <section aria-labelledby="category-overview-title">
+          <h2 id="category-overview-title">六間冷梗房</h2>
+          <ul>${categoryOverview}</ul>
+        </section>
+      </div>
       <footer class="lobby__footer">
         ${renderSoundButton(audioSupported, profile.soundEnabled)}
         <button class="text-button" type="button" data-action="clear-profile">清除本機紀錄</button>
@@ -90,13 +104,20 @@ export function renderChallenge(state) {
             : ''
         : '';
       const marker = String.fromCharCode(65 + index);
+      const resultText = state.answered
+        ? correct
+          ? '正確答案'
+          : selected
+            ? '你的答案 · 錯誤'
+            : ''
+        : '';
       return `
         <button class="answer-option${resultClass}" type="button" data-action="answer"
           data-answer="${escapeHtml(text)}" aria-describedby="answer-feedback"
           ${state.answered ? 'disabled' : ''}>
           <span aria-hidden="true">${marker}</span>
           <strong>${escapeHtml(text)}</strong>
-          ${state.answered && correct ? '<em>正解</em>' : ''}
+          ${resultText ? `<em>${resultText}</em>` : ''}
         </button>
       `;
     })
@@ -121,13 +142,21 @@ export function renderChallenge(state) {
         <h2 id="challenge-title" tabindex="-1">${escapeHtml(joke.question)}</h2>
         <div class="answer-grid">${choices}</div>
         ${feedback}
-        ${state.answered ? '<button class="primary-button" type="button" data-action="next-question">下一題 →</button>' : ''}
+        ${
+          state.answered
+            ? `<button class="primary-button" type="button" data-action="next-question">${
+                state.index === state.questions.length - 1 ? '查看退房報告' : '下一題 →'
+              }</button>`
+            : ''
+        }
       </article>
     </section>
   `;
 }
 
-export function renderResults(state) {
+export function renderResults(state, profile = { favorites: [] }) {
+  const lastJoke = state.questions[state.questions.length - 1];
+  const favorite = profile.favorites.includes(lastJoke.id);
   return `
     <section class="results screen-enter" aria-labelledby="results-title">
       <p class="eyebrow">CHECK-OUT REPORT · 退房冷度報告</p>
@@ -138,6 +167,11 @@ export function renderResults(state) {
         <p><span>答對</span><strong>${state.correctCount}／${state.questions.length}</strong></p>
         <p><span>最高連勝</span><strong>${state.bestStreak}</strong></p>
       </div>
+      <button class="result-favorite" type="button" data-action="toggle-result-favorite"
+        aria-pressed="${favorite}">
+        <span aria-hidden="true">${favorite ? '●' : '○'}</span>
+        ${favorite ? '最後一題已收藏' : '收藏最後一題'}
+      </button>
       <div class="result-actions">
         <button class="primary-button" type="button" data-action="restart">再住一晚</button>
         <button class="secondary-button" type="button" data-action="go-lobby">返回大廳</button>
@@ -214,11 +248,11 @@ export function renderGallery({ gallery, categories, profile }) {
     `;
   const copyFallback = gallery.manualCopyText
     ? `
-      <div class="copy-fallback" role="dialog" aria-labelledby="copy-title">
+      <section class="copy-fallback" aria-labelledby="copy-title">
         <h2 id="copy-title">請手動複製這則冷梗</h2>
         <textarea id="copy-text" readonly>${escapeHtml(gallery.manualCopyText)}</textarea>
         <button class="secondary-button" type="button" data-action="close-copy">關閉</button>
-      </div>
+      </section>
     `
     : '';
 
@@ -272,25 +306,41 @@ export function createApp({
 }) {
   const shell = document.querySelector('#app-shell');
   const liveRegion = document.querySelector('#live-region');
+  const toastRegion = document.querySelector('#toast-region');
   let profile = store.load();
   let view = 'lobby';
   let game = null;
   let gallery = null;
   audio.setEnabled(profile.soundEnabled);
 
+  function announce(message, showToast = false) {
+    if (liveRegion) liveRegion.textContent = message;
+    if (showToast && toastRegion) {
+      toastRegion.textContent = message;
+      toastRegion.classList.add('is-visible');
+      setTimeout(() => {
+        toastRegion.classList.remove('is-visible');
+      }, 2400);
+    }
+  }
+
   function persistProfile(nextProfile) {
     profile = nextProfile;
     const saved = store.save(profile);
-    if (!saved && liveRegion) {
-      liveRegion.textContent = '目前使用暫存模式，關閉分頁後紀錄不會保留。';
-    }
+    if (!saved) announce('目前使用暫存模式，關閉分頁後紀錄不會保留。', true);
   }
 
   function render() {
     if (view === 'challenge') shell.innerHTML = renderChallenge(game);
-    else if (view === 'results') shell.innerHTML = renderResults(game);
+    else if (view === 'results') shell.innerHTML = renderResults(game, profile);
     else if (view === 'gallery') shell.innerHTML = renderGallery({ gallery, categories, profile });
-    else shell.innerHTML = renderLobby({ profile, audioSupported: audio.supported });
+    else {
+      shell.innerHTML = renderLobby({
+        profile,
+        audioSupported: audio.supported,
+        categories
+      });
+    }
     shell.querySelector('[tabindex="-1"]')?.focus({ preventScroll: true });
   }
 
@@ -347,6 +397,14 @@ export function createApp({
       }
     } else if (action === 'go-lobby') {
       view = 'lobby';
+    } else if (action === 'toggle-result-favorite') {
+      const lastJoke = game.questions[game.questions.length - 1];
+      persistProfile(toggleFavorite(profile, lastJoke.id));
+      if (liveRegion) {
+        liveRegion.textContent = profile.favorites.includes(lastJoke.id)
+          ? '最後一題已收藏。'
+          : '最後一題已取消收藏。';
+      }
     } else if (action === 'set-category') {
       setGalleryCategory(trigger.dataset.category);
       markGalleryViewed();
@@ -391,7 +449,10 @@ export function createApp({
       const joke = gallery.visibleJokes[gallery.index];
       const result = await copyShareText(formatShareText(joke), clipboard);
       gallery = { ...gallery, manualCopyText: result.copied ? '' : result.text };
-      if (liveRegion) liveRegion.textContent = result.copied ? '分享文字已複製。' : '無法自動複製，已顯示手動複製欄位。';
+      announce(
+        result.copied ? '分享文字已複製。' : '無法自動複製，已顯示手動複製欄位。',
+        true
+      );
     } else if (action === 'close-copy') {
       gallery = { ...gallery, manualCopyText: '' };
     } else if (action === 'toggle-sound') {
@@ -399,8 +460,12 @@ export function createApp({
       persistProfile({ ...profile, soundEnabled });
       if (soundEnabled) audio.play('flip');
     } else if (action === 'clear-profile') {
-      store.clear();
+      const cleared = store.clear();
       profile = store.load();
+      announce(
+        cleared ? '本機紀錄已清除。' : '無法清除瀏覽器紀錄，已切換為暫存模式。',
+        true
+      );
     }
     render();
     if (view === 'gallery' && gallery?.revealed) {

@@ -73,6 +73,7 @@
   .answer-grid { grid-template-columns: repeat(2, 1fr); }
   .gallery-card { grid-template-columns: minmax(0, 1fr) 13rem; }
   .gallery-card__controls { border-top: 0; border-left: 1px solid rgb(23 52 59 / 25%); }
+  .lobby-guide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
 @media (min-width: 64rem) {

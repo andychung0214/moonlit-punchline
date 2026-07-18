@@ -7,6 +7,17 @@ export const DEFAULT_PROFILE = Object.freeze({
   preferredCategory: 'all'
 });
 
+const VALID_CATEGORIES = new Set([
+  'all',
+  'favorites',
+  'zh-pun',
+  'wordplay',
+  'nature',
+  'daily-life',
+  'world',
+  'absurd'
+]);
+
 function uniqueStrings(value) {
   if (!Array.isArray(value)) return [];
   return [...new Set(value.filter((item) => typeof item === 'string' && item.trim()))];
@@ -20,10 +31,9 @@ export function normalizeProfile(value = {}) {
     favorites: uniqueStrings(input.favorites),
     viewed: uniqueStrings(input.viewed),
     soundEnabled: input.soundEnabled === true,
-    preferredCategory:
-      typeof input.preferredCategory === 'string' && input.preferredCategory
-        ? input.preferredCategory
-        : 'all'
+    preferredCategory: VALID_CATEGORIES.has(input.preferredCategory)
+      ? input.preferredCategory
+      : 'all'
   };
 }
 
@@ -40,12 +50,23 @@ export function createProfileStore(storage, key = 'moonlit-punchline-profile') {
 
   function load() {
     if (!isPersistent) return normalizeProfile(memory);
+    let raw;
     try {
-      const raw = storage.getItem(key);
-      if (!raw) return normalizeProfile(memory);
+      raw = storage.getItem(key);
+    } catch {
+      isPersistent = false;
+      return normalizeProfile(memory);
+    }
+    if (!raw) return normalizeProfile(memory);
+    try {
       memory = normalizeProfile(JSON.parse(raw));
     } catch {
       memory = normalizeProfile();
+      try {
+        storage.removeItem(key);
+      } catch {
+        isPersistent = false;
+      }
     }
     return normalizeProfile(memory);
   }
@@ -69,8 +90,13 @@ export function createProfileStore(storage, key = 'moonlit-punchline-profile') {
       storage.removeItem(key);
       return true;
     } catch {
-      isPersistent = false;
-      return false;
+      try {
+        storage.setItem(key, JSON.stringify(memory));
+        return true;
+      } catch {
+        isPersistent = false;
+        return false;
+      }
     }
   }
 

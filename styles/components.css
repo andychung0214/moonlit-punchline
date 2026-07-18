@@ -13,12 +13,35 @@
   letter-spacing: 0.08em;
 }
 
+.loading-fallback {
+  opacity: 0;
+  font-size: 0.82rem;
+  animation: reveal-loading-error 1ms linear 6s forwards;
+}
+
 .toast-region {
   position: fixed;
   z-index: 20;
   right: var(--space-4);
   bottom: var(--space-4);
   max-width: min(24rem, calc(100vw - 2rem));
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-paper);
+  border-left: 0.25rem solid var(--color-moon);
+  background: var(--color-night);
+  box-shadow: var(--shadow-paper);
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+}
+
+.toast-region:empty {
+  display: none;
+}
+
+.toast-region.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .ambient-moon {
@@ -155,6 +178,41 @@
 
 .mode-door > span:not(.room-tag, .door-action) { max-width: 24rem; line-height: 1.7; }
 .door-action { justify-self: end; margin-top: var(--space-5); font-weight: 700; }
+
+.lobby-guide {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-block: var(--space-5);
+  border-block: 1px solid rgb(23 52 59 / 25%);
+}
+
+.lobby-guide summary {
+  min-height: 2.75rem;
+  padding-block: var(--space-2);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lobby-guide details p {
+  max-width: 38rem;
+  margin-bottom: 0;
+}
+
+.lobby-guide h2 {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.lobby-guide ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-spring);
+}
 .challenge { width: min(100%, 64rem); }
 
 .screen-nav,
@@ -276,6 +334,19 @@
   justify-content: center;
   gap: var(--space-3);
   margin-top: var(--space-6);
+}
+
+.result-favorite {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-stamp);
+  border: 0;
+  border-bottom: 1px solid currentcolor;
+  background: transparent;
+  cursor: pointer;
 }
 
 .gallery { width: min(100%, 70rem); }

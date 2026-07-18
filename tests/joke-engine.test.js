@@ -53,3 +53,12 @@ test('驗證器回報重複 ID 與錯誤選項', () => {
   assert.ok(result.errors.some((error) => error.includes('重複 ID')));
   assert.ok(result.errors.some((error) => error.includes('正確答案')));
 });
+
+test('驗證器拒絕空白或非字串干擾選項', () => {
+  const invalid = [
+    { ...fixtureJokes[0], distractors: ['甲', '  ', 42] }
+  ];
+  const result = validateJokes(invalid, new Set(['even', 'odd']));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some((error) => error.includes('不可空白字串')));
+});

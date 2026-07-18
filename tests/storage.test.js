@@ -28,6 +28,26 @@ test('正常讀寫並正規化紀錄', () => {
 test('損壞資料回到預設值', () => {
   const store = createProfileStore(createStorage({ broken: '{oops' }), 'broken');
   assert.deepEqual(store.load(), DEFAULT_PROFILE);
+  assert.equal(store.persistent, true);
+});
+
+test('讀取被安全政策阻擋時改用記憶體模式', () => {
+  const store = createProfileStore(
+    {
+      getItem: () => {
+        throw new Error('blocked');
+      },
+      setItem: () => {
+        throw new Error('blocked');
+      },
+      removeItem: () => {
+        throw new Error('blocked');
+      }
+    },
+    'blocked'
+  );
+  assert.deepEqual(store.load(), DEFAULT_PROFILE);
+  assert.equal(store.persistent, false);
 });
 
 test('寫入失敗時改用記憶體模式', () => {
@@ -53,4 +73,48 @@ test('收藏切換不修改原紀錄', () => {
   assert.deepEqual(initial.favorites, ['one']);
   assert.deepEqual(added.favorites, ['one', 'two']);
   assert.deepEqual(removed.favorites, ['two']);
+});
+
+test('未知分類偏好回到全部房間', () => {
+  assert.equal(normalizeProfile({ preferredCategory: 'unknown-room' }).preferredCategory, 'all');
+  assert.equal(normalizeProfile({ preferredCategory: 'world' }).preferredCategory, 'world');
+  assert.equal(normalizeProfile({ preferredCategory: 'favorites' }).preferredCategory, 'favorites');
+});
+
+test('removeItem 失敗時以覆寫預設值完成清除', () => {
+  let stored = JSON.stringify({ ...DEFAULT_PROFILE, bestScore: 900 });
+  const store = createProfileStore(
+    {
+      getItem: () => stored,
+      setItem: (_key, value) => {
+        stored = value;
+      },
+      removeItem: () => {
+        throw new Error('remove blocked');
+      }
+    },
+    'profile'
+  );
+  assert.equal(store.load().bestScore, 900);
+  assert.equal(store.clear(), true);
+  assert.equal(store.load().bestScore, 0);
+});
+
+test('無法移除或覆寫時回報清除失敗並切換暫存模式', () => {
+  const store = createProfileStore(
+    {
+      getItem: () => JSON.stringify({ ...DEFAULT_PROFILE, bestScore: 900 }),
+      setItem: () => {
+        throw new Error('write blocked');
+      },
+      removeItem: () => {
+        throw new Error('remove blocked');
+      }
+    },
+    'profile'
+  );
+  store.load();
+  assert.equal(store.clear(), false);
+  assert.equal(store.persistent, false);
+  assert.equal(store.load().bestScore, 0);
 });
