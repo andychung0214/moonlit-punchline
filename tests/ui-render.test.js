@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderChallenge, renderLobby, renderResults } from '../scripts/ui.js';
+import {
+  createGalleryState,
+  renderChallenge,
+  renderGallery,
+  renderLobby,
+  renderResults
+} from '../scripts/ui.js';
 
 const question = {
   id: 'test-001',
@@ -72,4 +78,59 @@ test('結算畫面顯示三項成績與重新挑戰', () => {
   assert.match(html, /8.*10/s);
   assert.match(html, /最高連勝.*5/s);
   assert.match(html, /data-action="restart"/);
+});
+
+const galleryJokes = [
+  { ...question, category: 'zh-pun' },
+  { ...question, id: 'test-002', question: '第二題？', answer: '第二個答案', category: 'world' }
+];
+const categories = [
+  { id: 'zh-pun', name: '華語諧音', room: '壹之間' },
+  { id: 'world', name: '世界冷梗', room: '伍之間' }
+];
+
+test('放映室初始狀態收起答案並提供分類與收藏篩選', () => {
+  const gallery = createGalleryState(galleryJokes, { favorites: [] });
+  const html = renderGallery({
+    gallery,
+    categories,
+    profile: { favorites: [] },
+    audioSupported: true
+  });
+  assert.equal(gallery.revealed, false);
+  assert.doesNotMatch(html, /因為它正在接受測試/);
+  assert.match(html, /data-category="all"/);
+  assert.match(html, /data-category="favorites"/);
+  assert.match(html, /data-action="flip-card"/);
+});
+
+test('翻牌後顯示答案、註解、地區與收藏狀態', () => {
+  const gallery = { ...createGalleryState(galleryJokes, { favorites: ['test-001'] }), revealed: true };
+  const html = renderGallery({
+    gallery,
+    categories,
+    profile: { favorites: ['test-001'] },
+    audioSupported: true
+  });
+  assert.match(html, /這一題/);
+  assert.match(html, /因為它正在接受測試/);
+  assert.match(html, /測試地區/);
+  assert.match(html, /aria-pressed="true"/);
+  assert.match(html, /data-action="copy-joke"/);
+});
+
+test('收藏篩選沒有題目時顯示可操作空狀態', () => {
+  const gallery = {
+    ...createGalleryState(galleryJokes, { favorites: [] }),
+    category: 'favorites',
+    visibleJokes: []
+  };
+  const html = renderGallery({
+    gallery,
+    categories,
+    profile: { favorites: [] },
+    audioSupported: false
+  });
+  assert.match(html, /還沒有收藏/);
+  assert.match(html, /data-category="all"/);
 });

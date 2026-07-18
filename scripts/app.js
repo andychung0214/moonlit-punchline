@@ -33,8 +33,10 @@ export function bootstrap(documentRef = document, windowRef = window) {
   const app = createApp({
     document: documentRef,
     jokes: JOKES,
+    categories: JOKE_CATEGORIES,
     store: createProfileStore(getStorage(windowRef)),
-    audio: createAudioController(AudioContextClass)
+    audio: createAudioController(AudioContextClass),
+    clipboard: windowRef.navigator?.clipboard
   });
   shell.dataset.ready = 'true';
   return app;
