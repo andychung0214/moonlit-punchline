@@ -24,3 +24,65 @@
     transform: translateX(-7vw);
   }
 }
+
+.lobby { width: 100%; }
+.lobby__header { display: grid; gap: var(--space-6); align-items: center; }
+
+.lobby__header h1 {
+  margin-bottom: var(--space-4);
+  font-size: clamp(3.6rem, 12vw, 8.5rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.lobby__header h1 span { margin-left: 0.55em; }
+.lobby__intro { max-width: 31rem; font-size: 1.05rem; }
+
+.lobby__records {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-block: var(--space-6);
+  border-block: 1px solid rgb(23 52 59 / 30%);
+}
+
+.lobby__records p { display: grid; gap: var(--space-1); margin: 0; padding: var(--space-3); text-align: center; }
+.lobby__records span { font-size: 0.7rem; letter-spacing: 0.08em; }
+.lobby__records strong { font-family: var(--font-display); font-size: 1.6rem; }
+.mode-doors { display: grid; gap: var(--space-4); }
+
+.lobby__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  font-size: 0.78rem;
+}
+
+.lobby__footer > span { margin-left: auto; color: var(--color-spring); }
+
+@media (min-width: 40rem) {
+  .lobby__header { grid-template-columns: minmax(0, 1fr) auto; }
+  .mode-doors { grid-template-columns: repeat(2, 1fr); }
+  .answer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64rem) {
+  .lobby__header { grid-template-columns: minmax(0, 1.5fr) auto; }
+  .lobby__records { width: 52%; margin-left: auto; }
+  .mode-doors { margin-top: -3rem; }
+  .mode-door--gallery { transform: translateY(4rem); }
+  .mode-door--gallery:hover { transform: translateY(3.82rem); }
+}
+
+@media (max-width: 39.999rem) {
+  .ambient-moon { opacity: 0.45; }
+  .lobby__header { justify-items: center; text-align: center; }
+  .lobby__header h1 span { margin-left: 0; }
+  .lobby__records strong { font-size: 1.3rem; }
+  .challenge__status { display: grid; grid-template-columns: 1fr 1fr; }
+  .challenge__status p:first-child { grid-column: 1 / -1; }
+  .question-paper__meta { align-items: flex-start; flex-direction: column; }
+  .result-grid { grid-template-columns: 1fr; }
+  .result-grid p + p { border-top: 1px solid rgb(23 52 59 / 30%); border-left: 0; }
+}

@@ -13,5 +13,6 @@ test('入口包含語意掛載點與無障礙回饋區', () => {
 test('入口包含 SEO、結構化資料及相對資源', () => {
   assert.match(html, /property="og:title"/);
   assert.match(html, /application\/ld\+json/);
+  assert.match(html, /rel="icon"/);
   assert.doesNotMatch(html, /(?:src|href)="\//);
 });
