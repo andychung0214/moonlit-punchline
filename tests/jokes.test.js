@@ -1,17 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JOKE_CATEGORIES, JOKES } from '../data/jokes.js';
+import { EXTRA_JOKES } from '../data/extra-jokes.js';
 
-test('題庫為六類各十二題', () => {
+test('擴充題目提供來源且不可變，並納入遊戲題庫', () => {
+  assert.equal(EXTRA_JOKES.length, 36);
+  for (const joke of EXTRA_JOKES) {
+    assert.ok(joke.source.trim());
+    assert.ok(joke.note.includes(joke.source));
+    assert.ok(Object.isFrozen(joke));
+    assert.ok(Object.isFrozen(joke.distractors));
+    assert.ok(JOKES.includes(joke));
+  }
+});
+
+test('題庫擴充至 108 題且保留六類與原有 ID', () => {
   assert.equal(JOKE_CATEGORIES.length, 6);
-  assert.equal(JOKES.length, 72);
+  assert.equal(JOKES.length, 108);
   for (const category of JOKE_CATEGORIES) {
     assert.equal(
       JOKES.filter((joke) => joke.category === category.id).length,
-      12,
-      `${category.id} 必須有 12 題`
+      category.id === 'zh-pun' ? 36 : category.id === 'wordplay' ? 24 : 12,
+      `${category.id} 題數必須符合擴充規格`
     );
   }
+  for (const category of JOKE_CATEGORIES) {
+    for (let number = 1; number <= 12; number += 1) {
+      assert.ok(JOKES.some(({ id }) => id === `${category.id}-${String(number).padStart(3, '0')}`));
+    }
+  }
+  assert.ok(JOKES.some(({ answer }) => answer.includes('OK 蹦')));
 });
 
 test('每題符合資料契約與唯一性', () => {

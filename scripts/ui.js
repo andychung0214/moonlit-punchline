@@ -1,3 +1,4 @@
+import { JOKES } from '../data/jokes.js';
 import { advanceGame, answerCurrent, createGame } from './game-state.js';
 import { filterJokes } from './joke-engine.js';
 import { copyShareText, formatShareText } from './share.js';
@@ -74,7 +75,7 @@ export function renderLobby({ profile, audioSupported = false, categories = [] }
       <footer class="lobby__footer">
         ${renderSoundButton(audioSupported, profile.soundEnabled)}
         <button class="text-button" type="button" data-action="clear-profile">清除本機紀錄</button>
-        <span>本館共 72 則冷梗 · 全齡友善</span>
+        <span>本館共 ${JOKES.length} 則冷梗 · 全齡友善</span>
       </footer>
     </section>
   `;

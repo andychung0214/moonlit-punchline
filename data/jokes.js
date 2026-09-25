@@ -1,3 +1,5 @@
+import { EXTRA_JOKES } from './extra-jokes.js';
+
 export const JOKE_CATEGORIES = Object.freeze([
   { id: 'zh-pun', name: '華語諧音', room: '壹之間' },
   { id: 'wordplay', name: '文字遊戲', room: '貳之間' },
@@ -108,5 +110,5 @@ export const JOKES = Object.freeze(
         difficulty
       })
     )
-  )
+  ).concat(EXTRA_JOKES)
 );
