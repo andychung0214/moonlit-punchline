@@ -4,7 +4,7 @@ import { JOKE_CATEGORIES, JOKES } from '../data/jokes.js';
 import { EXTRA_JOKES } from '../data/extra-jokes.js';
 
 test('擴充題目提供來源且不可變，並納入遊戲題庫', () => {
-  assert.equal(EXTRA_JOKES.length, 40);
+  assert.equal(EXTRA_JOKES.length, 57);
   for (const joke of EXTRA_JOKES) {
     assert.ok(joke.source.trim());
     assert.ok(joke.note.includes(joke.source));
@@ -14,13 +14,13 @@ test('擴充題目提供來源且不可變，並納入遊戲題庫', () => {
   }
 });
 
-test('題庫擴充至 112 題且保留六類與原有 ID', () => {
+test('題庫擴充至 129 題且保留六類與原有 ID', () => {
   assert.equal(JOKE_CATEGORIES.length, 6);
-  assert.equal(JOKES.length, 112);
+  assert.equal(JOKES.length, 129);
   for (const category of JOKE_CATEGORIES) {
     assert.equal(
       JOKES.filter((joke) => joke.category === category.id).length,
-      category.id === 'zh-pun' ? 40 : category.id === 'wordplay' ? 24 : 12,
+      category.id === 'zh-pun' ? 55 : category.id === 'wordplay' ? 26 : 12,
       `${category.id} 題數必須符合擴充規格`
     );
   }
